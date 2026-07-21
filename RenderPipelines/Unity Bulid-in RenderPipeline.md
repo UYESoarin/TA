@@ -59,8 +59,8 @@
         漫反射`Diffuse`、镜面反射`Specular`、环境光`Ambient`
     * 光照模型：
         * Phong
-        $$
-        max(n·l,0) + pow(max(r·v,0),smoothness) + ambient$$
+
+        $$max(n·l,0) + pow(max(r·v,0),smoothness) + ambient$$
 
 
 ### Merge & Output image(pixels) —— 颜色遮挡与透明混合
@@ -74,175 +74,161 @@
 ### 后处理
 ---
 ### Computer Graphic Math Principle
+
 ---
 #### Vector multiplication in Matrix form
 
 * Dot product
 
 $$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
-=x_1x_2+y_1y_2+z_1z_2
+\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
+\cdot
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+=
+x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
 
 ---
-
 * Cross product
 
 $$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
+\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
+\times
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
 =
-\begin{bmatrix}
-0&-z_1&y_1\\
-z_1&0&-x_1\\
--y_1&x_1&0
-\end{bmatrix}
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
+\begin{pmatrix}
+0 & -z_1 & y_1 \\
+z_1 & 0 & -x_1 \\
+-y_1 & x_1 & 0
+\end{pmatrix}
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
 $$
 
 ---
-
 * Rotation around an axis Matrix
 
 $$
 R_x(\alpha)=
-\begin{bmatrix}
-1&0&0&0\\
-0&\cos{\alpha}&-\sin{\alpha}&0\\
-0&\sin{\alpha}&\cos{\alpha}&0\\
-0&0&0&1
-\end{bmatrix}
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & \cos\alpha & -\sin\alpha & 0 \\
+0 & \sin\alpha & \cos\alpha & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
 $$
 
 $$
 R_y(\alpha)=
-\begin{bmatrix}
-\cos{\alpha}&0&\sin{\alpha}&0\\
-0&1&0&0\\
--\sin{\alpha}&0&\cos{\alpha}&0\\
-0&0&0&1
-\end{bmatrix}
+\begin{pmatrix}
+\cos\alpha & 0 & \sin\alpha & 0 \\
+0 & 1 & 0 & 0 \\
+-\sin\alpha & 0 & \cos\alpha & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
 $$
 
 $$
 R_z(\alpha)=
-\begin{bmatrix}
-\cos{\alpha}&-\sin{\alpha}&0&0\\
-\sin{\alpha}&\cos{\alpha}&0&0\\
-0&0&1&0\\
-0&0&0&1
-\end{bmatrix}
+\begin{pmatrix}
+\cos\alpha & -\sin\alpha & 0 & 0 \\
+\sin\alpha & \cos\alpha & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
 $$
 
 ---
-
-* View/Camera Transformation(Position to Zero, up to y, forward to -z)
+* View/Camera Transformation (Position to Zero, up to y, forward to -z)
 
 $$
 ViewMatrix=RT=
-\begin{bmatrix}
-x_{right}&y_{right}&z_{right}&0\\
-x_{up}&y_{up}&z_{up}&0\\
-x_{back}&y_{back}&z_{back}&0\\
-0&0&0&1
-\end{bmatrix}
-\begin{bmatrix}
-1&0&0&-x_c\\
-0&1&0&-y_c\\
-0&0&1&-z_c\\
-0&0&0&1
-\end{bmatrix}
+\begin{pmatrix}
+x_{right} & y_{right} & z_{right} & 0 \\
+x_{up} & y_{up} & z_{up} & 0 \\
+x_{back} & y_{back} & z_{back} & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+1 & 0 & 0 & -x_c \\
+0 & 1 & 0 & -y_c \\
+0 & 0 & 1 & -z_c \\
+0 & 0 & 0 & 1
+\end{pmatrix}
 $$
 
 注意，$R$ 由正交性，逆向转置求解。
 
 ---
-
 * Orthographic/Perspective Projection 略
 
 ---
-
 * **Phong**
 
-
 $$
-I_p=k_aI_a+\sum _{m\in lights}\left(k_dI_{m,d}(n_m\cdot l)+k_sI_{m,s}(r_m\cdot v)\right)
+I_p = k_a I_a + \sum_{m \in lights} \left( k_d I_{m,d} (n_m \cdot l) + k_s I_{m,s} (r_m \cdot v) \right)
 $$
 
 ---
-
-* **Lambertian(Diffuse)**
+* **Lambertian (Diffuse)**
 
 $$
-L_d=k_d(I/r^2)\max(n\cdot l,0)
+L_d = k_d \frac{I}{r^2} \max(n \cdot l, 0)
 $$
 
-其中，$k_d$ 为光照点颜色，$n$ 为面单位法向量，$l$ 为入射光单位方向向量。
+其中， $k_d$  为光照点颜色， $n$  为面单位法向量， $l$  为入射光单位方向向量。
 
 ---
-* **Specular Term(Blinn-Phong)**
+* **Specular Term (Blinn-Phong)**
 
 $$
-L_s=k_s(I/r^2)\max(n\cdot h,0)^p
+L_s = k_s \frac{I}{r^2} \max(n \cdot h, 0)^p
 $$
 
 其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$，与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
 
 ---
-
 * **Ambient Term**
 
 $$
-L_a=k_aI_a
+L_a = k_a I_a
 $$
 
 其中，$k_a$ 为环境光。
 
 ---
-
 * **Blinn-Phong Reflection Model**
 
 $$
-L=L_a+L_d+L_s
+L = L_a + L_d + L_s
 $$
 
 解决 Phong 的高光光照问题。
 
-* Barycentric coordinates`重心坐标`
+* Barycentric coordinates（重心坐标）
 
 $$
-(x,y)=\alpha A+\beta B+\gamma C\\
-\alpha+\beta+\gamma=1
+(x,y) = \alpha A + \beta B + \gamma C \\
+\alpha + \beta + \gamma = 1
 $$
 
 其中，$A$，$B$，$C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
-推广：$V=V_A+V_B+V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
+
+推广：$V = V_A + V_B + V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
 
 ---
-
 * Bilinear interpolation 略
-
 * Mip Map Level Computing
-
 * Displacement mapping
-
-* Constuctive Solid Geometry
-
+* Constructive Solid Geometry
 * Catmull-Clark Subdivision
-
-* Spatial Patitioning 
-
+* Spatial Partitioning 
     * KD-Tree
-
     * Oct-Tree
-
     * BSP-Tree
 
 ---
-
 * The Plenoptic Function
 
 $$
-P(\theta,\phi,\lambda,t,V_x,V_y,V_z)
+P(\theta, \phi, \lambda, t, V_x, V_y, V_z)
 $$
