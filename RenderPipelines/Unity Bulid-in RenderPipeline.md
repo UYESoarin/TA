@@ -4,7 +4,7 @@
 ### CPU Application —— 确定渲染对象与顺序
 ---
 * **剔除 `Culling`**
-视锥剔除 `Frustum Culiing`：包围盒判断与视锥碰撞
+视锥剔除 `Frustum Culiing`：AABB包围盒`Axis-Aligned Bounding Box`判断与视锥碰撞
 遮挡剔除 `Occlusion Culling`
 层级剔除 `Layer Culling`
 
@@ -12,11 +12,12 @@
 渲染队列 `RenderQueue`
     1. 不透明队列**自前而后**（RenderQueue < 2500） 
     2. 透明队列**自后而前**（RenderQueue > 2500）
+* **动态合批**
 
 * **打包数据 - 3D vertices input**
 模型：顶点坐标、法线、UV、切线、顶点色、索引列表
 变换矩阵、灯光、材质参数
-* **提交 Draw call**
+* **提交 SetPassCall & DrawCall**
 
 
 ### Vertex Shader Processing —— 顶点变换到屏幕空间
@@ -29,13 +30,15 @@
     3. 相机空间`View Space`
     ↓ **Projection** Matrix
     4. 裁剪空间`Clip Space`
+    (x,y,z,w)
+
 * **自定义数据**
 
 
 ### Triangle Processing & Rasterization —— 点连成图元，图元光栅化得片元
 ---
 * 裁剪剔除：剔除裁剪空间外的面
-* 标准化设备坐标 NDC：透视除法，视口归一化便于适配分辨率
+* 标准化设备坐标 NDC：透视除法，视口归一化便于适配分辨率(视锥体坍缩为立方体)
 * 背面剔除：根据法线方向
 * 屏幕坐标：视口转换
 * 图元装配：顶点连线
@@ -66,7 +69,7 @@
 * Alpha测试
 * 深度测试`Depth Test`：`Early-Z`为顶点着色提前深度测试
 * 深度写入`Depth Write`
-* 颜色混合`Blending`：透明重叠插值
+* 颜色混合`Blending`：透明重叠插值 Src * Alpha + Dst * OneMinusAlpha
 
 ### 后处理
 ---
@@ -76,67 +79,115 @@
 #### Vector multiplication in Matrix form
 * Dot product
 $$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=x_1x_2+y_1y_2+z_1z_2
+\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot
+\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
+= x_1x_2+y_1y_2+z_1z_2
 $$
 ---
 * Cross product
 $$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=\begin{pmatrix}0&-z_1&y_1\\z_1&0&-x_1\\-y_1&x_1&0\end{pmatrix}\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
+\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times
+\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
+=
+\left[\begin{array}{ccc}
+0 & -z_1 & y_1 \\
+z_1 & 0 & -x_1 \\
+-y_1 & x_1 & 0
+\end{array}\right]
+\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
 $$
 ---
 * Rotation around an axis Matrix
 $$
-R_x(\alpha)=\begin{pmatrix}1&0&0&0\\0&\cos{\alpha}&-\sin{\alpha}&0\\0&\sin{\alpha}&\cos{\alpha}&0\\0&0&0&1\end{pmatrix}
+R_x(\alpha)=
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & \cos\alpha & -\sin\alpha & 0 \\
+0 & \sin\alpha & \cos\alpha & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
 $$
 $$
-R_y(\alpha)=\begin{pmatrix}\cos{\alpha}&0&\sin{\alpha}&0\\0&1&0&0\\-\sin{\alpha}&0&\cos{\alpha}&0\\0&0&0&1\end{pmatrix}
+R_y(\alpha)=
+\begin{bmatrix}
+\cos\alpha & 0 & \sin\alpha & 0 \\
+0 & 1 & 0 & 0 \\
+-\sin\alpha & 0 & \cos\alpha & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
 $$
 $$
-R_x(\alpha)=\begin{pmatrix}\cos{\alpha}&-\sin{\alpha}&0&0\\\sin{\alpha}&\cos{\alpha}&0&0\\0&0&1&0\\0&0&0&1\end{pmatrix}
+R_z(\alpha)=
+\begin{bmatrix}
+\cos\alpha & -\sin\alpha & 0 & 0 \\
+\sin\alpha & \cos\alpha & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
 $$
 ---
-* View/Camera Transformation(Position to Zero, up to y, forward to -z)
+* View/Camera Transformation (Position to Zero, up to y, forward to -z)
 $$
-ViewMatrix=RT=\begin{bmatrix}x_{right}&y_{right}&z_{right}&0\\x_{up}&y_{up}&z_{up}&0\\x_{back}&y_{back}&z_{back}&0\\0&0&0&1\end{bmatrix}\begin{bmatrix}1&0&0&-x_c\\0&1&0&-y_c\\0&0&1&-z_c\\0&0&0&1\end{bmatrix}
+ViewMatrix=RT=
+\begin{bmatrix}
+x_{right} & y_{right} & z_{right} & 0 \\
+x_{up} & y_{up} & z_{up} & 0 \\
+x_{back} & y_{back} & z_{back} & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0 & 0 & -x_c \\
+0 & 1 & 0 & -y_c \\
+0 & 0 & 1 & -z_c \\
+0 & 0 & 0 & 1
+\end{bmatrix}
 $$
-$注意，R由正交性，逆向转置求解$
+注意：R由正交性，逆向转置求解。
 ---
 * Orthographic/Perspective Projection 略
 ---
-* **Lambertian(Diffuse)**
+* **Phong**
 $$
-L_d=k_d(I/r^2)max(n\cdot l,0)
+I_p = k_a I_a + \sum_{m\in lights}\left( k_d I_{m,d}(n_m\cdot l) + k_s I_{m,s}(r_m\cdot v) \right)
 $$
-$其中，n为面单位法向量、l为入射光单位方向向量$
 ---
-* **Specular Term(Blinn-Phong)**
+* **Lambertian (Diffuse)**
 $$
-L_s=k_s(I/r^2)max(n\cdot h,0)^p
+L_d = k_d \frac{I}{r^2} \max(n\cdot l, 0)
 $$
-$其中，h为入射光方向向量 l，与视线观察向量 v 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角$
+其中，$k_d$ 为光照点颜色，$n$ 为面单位法向量，$l$ 为入射光单位方向向量。
+---
+* **Specular Term (Blinn-Phong)**
+$$
+L_s = k_s \frac{I}{r^2} \max(n\cdot h, 0)^p
+$$
+其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$ 与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
 ---
 * **Ambient Term**
-$$L_a=k_aI_a$$
+$$
+L_a = k_a I_a
+$$
+其中，$k_a$ 为环境光。
 ---
 * **Blinn-Phong Reflection Model**
 $$
-L=L_a+L_d+L_s
+L = L_a + L_d + L_s
 $$
-* Barycentric coordinates`重心坐标`
+解决 Phong 的高光光照问题。
+
+* Barycentric coordinates（重心坐标）
 $$
-(x,y)=\alpha A+\beta B+\gamma C\\
-\alpha+\beta+\gamma=1\\
-其中，A，B，C为三角形的顶点坐标，若系数皆非负，则坐标在三角形内\\
-推广：V=V_A+V_B+V_C\\
-对内部插值参数颜色、坐标、法线、深度、材质
+(x,y) = \alpha A + \beta B + \gamma C,\quad \alpha+\beta+\gamma=1
 $$
+其中，$A, B, C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
+推广：$V = V_A + V_B + V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
 ---
 * Bilinear interpolation 略
 * Mip Map Level Computing
 * Displacement mapping
-* Constuctive Solid Geometry
+* Constructive Solid Geometry
 * Catmull-Clark Subdivision
-* Spatial Patitioning 
+* Spatial Partitioning
     * KD-Tree
     * Oct-Tree
     * BSP-Tree
