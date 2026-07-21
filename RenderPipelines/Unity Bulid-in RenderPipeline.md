@@ -73,133 +73,44 @@
 
 ### 后处理
 ---
-
 ### Computer Graphic Math Principle
----
-#### Vector multiplication in Matrix form
-* Dot product
-<<<<<<< HEAD
-$$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
-= x_1x_2+y_1y_2+z_1z_2
-$$
----
-* Cross product
-$$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
-=
-\left[\begin{array}{ccc}
-0 & -z_1 & y_1 \\
-z_1 & 0 & -x_1 \\
--y_1 & x_1 & 0
-\end{array}\right]
-\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
-$$
-=======
-$$\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=x_1x_2+y_1y_2+z_1z_2$$
----
-* Cross product
-$$\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=\begin{pmatrix}0&-z_1&y_1\\z_1&0&-x_1\\-y_1&x_1&0\end{pmatrix}\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}$$
->>>>>>> 64afd058cb917bbf26b6ae0a22bbf7f82e7354f3
----
-* Rotation around an axis Matrix
-$$
-R_x(\alpha)=
-\begin{bmatrix}
-1 & 0 & 0 & 0 \\
-0 & \cos\alpha & -\sin\alpha & 0 \\
-0 & \sin\alpha & \cos\alpha & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
-$$
-R_y(\alpha)=
-\begin{bmatrix}
-\cos\alpha & 0 & \sin\alpha & 0 \\
-0 & 1 & 0 & 0 \\
--\sin\alpha & 0 & \cos\alpha & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
-$$
-R_z(\alpha)=
-\begin{bmatrix}
-\cos\alpha & -\sin\alpha & 0 & 0 \\
-\sin\alpha & \cos\alpha & 0 & 0 \\
-0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
----
-* View/Camera Transformation (Position to Zero, up to y, forward to -z)
-$$
-ViewMatrix=RT=
-\begin{bmatrix}
-x_{right} & y_{right} & z_{right} & 0 \\
-x_{up} & y_{up} & z_{up} & 0 \\
-x_{back} & y_{back} & z_{back} & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-1 & 0 & 0 & -x_c \\
-0 & 1 & 0 & -y_c \\
-0 & 0 & 1 & -z_c \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
-注意：R由正交性，逆向转置求解。
----
-* Orthographic/Perspective Projection 略
----
-* **Phong**
-$$
-I_p = k_a I_a + \sum_{m\in lights}\left( k_d I_{m,d}(n_m\cdot l) + k_s I_{m,s}(r_m\cdot v) \right)
-$$
----
-* **Lambertian (Diffuse)**
-$$
-L_d = k_d \frac{I}{r^2} \max(n\cdot l, 0)
-$$
-其中，$k_d$ 为光照点颜色，$n$ 为面单位法向量，$l$ 为入射光单位方向向量。
----
-* **Specular Term (Blinn-Phong)**
-$$
-L_s = k_s \frac{I}{r^2} \max(n\cdot h, 0)^p
-$$
-其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$ 与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
----
-* **Ambient Term**
-$$
-L_a = k_a I_a
-$$
-其中，$k_a$ 为环境光。
----
-* **Blinn-Phong Reflection Model**
-$$
-L = L_a + L_d + L_s
-$$
-解决 Phong 的高光光照问题。
 
-* Barycentric coordinates（重心坐标）
-$$
-(x,y) = \alpha A + \beta B + \gamma C,\quad \alpha+\beta+\gamma=1
-$$
-其中，$A, B, C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
-推广：$V = V_A + V_B + V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
----
-* Bilinear interpolation 略
-* Mip Map Level Computing
-* Displacement mapping
-* Constructive Solid Geometry
-* Catmull-Clark Subdivision
-* Spatial Partitioning
-    * KD-Tree
-    * Oct-Tree
-    * BSP-Tree
----
-* The Plenoptic Function
-$$
-P(\theta,\phi,\lambda,t,V_x,V_y,V_z)
-$$
+#### Vector multiplication in Matrix form
+* Dot product  
+    $$ (x_1, y_1, z_1) \cdot (x_2, y_2, z_2)^T = x_1x_2 + y_1y_2 + z_1z_2 $$
+
+* Cross product  
+    $$ (x_1, y_1, z_1) \times (x_2, y_2, z_2)^T = \begin{bmatrix} 0 & -z_1 & y_1 \\ z_1 & 0 & -x_1 \\ -y_1 & x_1 & 0 \end{bmatrix} \begin{bmatrix} x_2 \\ y_2 \\ z_2 \end{bmatrix} $$
+
+* Rotation matrices  
+    $$ R_x(\alpha) = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & \cos\alpha & -\sin\alpha & 0 \\ 0 & \sin\alpha & \cos\alpha & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
+
+    $$ R_y(\alpha) = \begin{bmatrix} \cos\alpha & 0 & \sin\alpha & 0 \\ 0 & 1 & 0 & 0 \\ -\sin\alpha & 0 & \cos\alpha & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
+
+    $$ R_z(\alpha) = \begin{bmatrix} \cos\alpha & -\sin\alpha & 0 & 0 \\ \sin\alpha & \cos\alpha & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
+
+* View/Camera Transformation  
+    $$ View = R \cdot T $$  
+where  
+    $$ R = \begin{bmatrix} x_{right} & y_{right} & z_{right} & 0 \\ x_{up} & y_{up} & z_{up} & 0 \\ x_{back} & y_{back} & z_{back} & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \quad T = \begin{bmatrix} 1 & 0 & 0 & -x_c \\ 0 & 1 & 0 & -y_c \\ 0 & 0 & 1 & -z_c \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
+
+* Phong Model  
+    $$ I_p = k_a I_a + \sum_{m\in lights} \left( k_d I_{m,d} (n_m \cdot l) + k_s I_{m,s} (r_m \cdot v) \right) $$
+
+* Lambertian Diffuse  
+    $$ L_d = k_d \frac{I}{r^2} \max(n\cdot l, 0) $$
+
+* Specular Term (Blinn-Phong)  
+    $$ L_s = k_s \frac{I}{r^2} \max(n\cdot h, 0)^p $$
+
+* Ambient Term  
+    $$ L_a = k_a I_a $$
+
+* Blinn-Phong Reflection Model  
+    $$ L = L_a + L_d + L_s $$
+
+* Barycentric coordinates  
+    $$ (x,y) = \alpha A + \beta B + \gamma C,\quad \alpha+\beta+\gamma=1 $$
+
+* Plenoptic Function  
+    $$ P(\theta, \phi, \lambda, t, V_x, V_y, V_z) $$
