@@ -75,12 +75,10 @@
 ---
 #### Vector multiplication in Matrix form
 * Dot product
-$\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=x_1x_2+y_1y_2+z_1z_2$
+$$\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=x_1x_2+y_1y_2+z_1z_2$$
 ---
 * Cross product
-$$
-\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=\begin{pmatrix}0&-z_1&y_1\\z_1&0&-x_1\\-y_1&x_1&0\end{pmatrix}\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
-$$
+$$\begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}=\begin{pmatrix}0&-z_1&y_1\\z_1&0&-x_1\\-y_1&x_1&0\end{pmatrix}\begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}$$
 ---
 * Rotation around an axis Matrix
 $$
