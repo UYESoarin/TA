@@ -204,7 +204,10 @@ $$
 * Barycentric coordinates（重心坐标）
 
 $$
-(x,y) = \alpha A + \beta B + \gamma C \\
+(x,y) = \alpha A + \beta B + \gamma C
+$$
+
+$$
 \alpha + \beta + \gamma = 1
 $$
 
