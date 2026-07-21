@@ -84,7 +84,9 @@ $$
 \left( \begin{array}{ccc} x_1 & y_1 & z_1 \end{array} \right)
 \cdot
 \left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
-=
+$$
+
+$$
 x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
 
