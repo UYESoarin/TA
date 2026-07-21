@@ -81,25 +81,24 @@
 * Dot product
 
 $$
-\left( \begin{array}{ccc} x_1 & y_1 & z_1 \end{array} \right)
+\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
 \cdot
-\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)=x_1 x_2 + y_1 y_2 + z_1 z_2
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}= x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
 
 ---
 * Cross product
 
 $$
-\left( \begin{array}{ccc} x_1 & y_1 & z_1 \end{array} \right)
+\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
 \times
-\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
-=
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}=
 \begin{pmatrix}
 0 & -z_1 & y_1 \\
 z_1 & 0 & -x_1 \\
 -y_1 & x_1 & 0
 \end{pmatrix}
-\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
+\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
 $$
 
 ---
