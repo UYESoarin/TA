@@ -79,6 +79,7 @@ int main(){
 # 六、数学公式
 # KaTex
 ## Formulas
+
 $$
 x^\frac{1}{y} = \sqrt[y]{x}     \\
 \sin 90^{\circ} = 1     \\
@@ -95,12 +96,16 @@ e^x = \sum _{k=0} ^\infty \frac{x^k}{k!}    \\
 \overline x = \frac{\sum _{i=0} ^{n} x_i}{n}    \\
 f(x) = 1 + \cdots + n
 $$
+
 $$
 \begin{Bmatrix}
 a & b\\
 c & d\\
 \end{Bmatrix}
 $$
+
 ## Symbols
-$\alpha,\beta,\gamma,\theta,\eta,\omega,\epsilon,\delta,\mu,\pi$
-$\emptyset,\ni,\notni,\supset,\supseteq,\bigcup,\bigcap$
+ $\alpha,\beta,\gamma,\theta,\eta,\omega,\epsilon,\delta,\mu,\pi$ 
+ $\emptyset,\ni,\notni,\supset,\supseteq,\bigcup,\bigcap$ 
+
+ 注意：在github中正常渲染，等号不放在行首且 `$` `$$` 相关代码段前后需要添加空白符

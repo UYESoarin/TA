@@ -83,7 +83,7 @@
 $$
 \begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
 \cdot
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}= x_1 x_2 + y_1 y_2 + z_1 z_2
+\begin{pmatrix} x_2 & y_2 & z_2 \end{pmatrix}^T= x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
 
 ---
@@ -92,7 +92,7 @@ $$
 $$
 \begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
 \times
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}=
+\begin{pmatrix} x_2 & y_2 & z_2 \end{pmatrix}^T=
 \begin{pmatrix}
 0 & -z_1 & y_1 \\
 z_1 & 0 & -x_1 \\
@@ -106,32 +106,32 @@ $$
 
 $$
 R_x(\alpha)=
-\begin{pmatrix}
+\begin{bmatrix}
 1 & 0 & 0 & 0 \\
 0 & \cos \alpha & -\sin \alpha & 0 \\
 0 & \sin \alpha & \cos \alpha & 0 \\
 0 & 0 & 0 & 1
-\end{pmatrix}
+\end{bmatrix}
 $$
 
 $$
 R_y(\alpha)=
-\begin{pmatrix}
+\begin{bmatrix}
 \cos \alpha & 0 & \sin \alpha & 0 \\
 0 & 1 & 0 & 0 \\
 -\sin \alpha & 0 & \cos \alpha & 0 \\
 0 & 0 & 0 & 1
-\end{pmatrix}
+\end{bmatrix}
 $$
 
 $$
 R_z(\alpha)=
-\begin{pmatrix}
+\begin{bmatrix}
 \cos \alpha & -\sin \alpha & 0 & 0 \\
 \sin \alpha & \cos \alpha & 0 & 0 \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 1
-\end{pmatrix}
+\end{bmatrix}
 $$
 
 ---
@@ -181,7 +181,7 @@ $$
 L_s = k_s \frac{I}{r^2} \max(n \cdot h, 0)^p
 $$
 
-其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$，与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
+其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$ ，与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
 
 ---
 * **Ambient Term**
@@ -208,9 +208,9 @@ $$
 \alpha + \beta + \gamma = 1
 $$
 
-其中，$A$，$B$，$C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
+其中，$A$ ，$B$ ，$C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
 
-推广：$V = V_A + V_B + V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
+推广： $V = V_A + V_B + V_C$ ，对内部插值参数颜色、坐标、法线、深度、材质。
 
 ---
 * Bilinear interpolation 略
