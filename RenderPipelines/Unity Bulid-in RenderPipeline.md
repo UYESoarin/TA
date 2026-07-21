@@ -81,9 +81,9 @@
 * Dot product
 
 $$
-\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
+\left( \begin{array}{ccc} x_1 & y_1 & z_1 \end{array} \right)
 \cdot
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
 =
 x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
@@ -92,16 +92,16 @@ $$
 * Cross product
 
 $$
-\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
+\left( \begin{array}{ccc} x_1 & y_1 & z_1 \end{array} \right)
 \times
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
 =
 \begin{pmatrix}
 0 & -z_1 & y_1 \\
 z_1 & 0 & -x_1 \\
 -y_1 & x_1 & 0
 \end{pmatrix}
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( \begin{array}{c} x_2 \\ y_2 \\ z_2 \end{array} \right)
 $$
 
 ---
@@ -111,8 +111,8 @@ $$
 R_x(\alpha)=
 \begin{pmatrix}
 1 & 0 & 0 & 0 \\
-0 & \cos\alpha & -\sin\alpha & 0 \\
-0 & \sin\alpha & \cos\alpha & 0 \\
+0 & \cos \alpha & -\sin \alpha & 0 \\
+0 & \sin \alpha & \cos \alpha & 0 \\
 0 & 0 & 0 & 1
 \end{pmatrix}
 $$
@@ -120,9 +120,9 @@ $$
 $$
 R_y(\alpha)=
 \begin{pmatrix}
-\cos\alpha & 0 & \sin\alpha & 0 \\
+\cos \alpha & 0 & \sin \alpha & 0 \\
 0 & 1 & 0 & 0 \\
--\sin\alpha & 0 & \cos\alpha & 0 \\
+-\sin \alpha & 0 & \cos \alpha & 0 \\
 0 & 0 & 0 & 1
 \end{pmatrix}
 $$
@@ -130,8 +130,8 @@ $$
 $$
 R_z(\alpha)=
 \begin{pmatrix}
-\cos\alpha & -\sin\alpha & 0 & 0 \\
-\sin\alpha & \cos\alpha & 0 & 0 \\
+\cos \alpha & -\sin \alpha & 0 & 0 \\
+\sin \alpha & \cos \alpha & 0 & 0 \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 1
 \end{pmatrix}
@@ -175,7 +175,7 @@ $$
 L_d = k_d \frac{I}{r^2} \max(n \cdot l, 0)
 $$
 
-其中， $k_d$  为光照点颜色， $n$  为面单位法向量， $l$  为入射光单位方向向量。
+其中，$k_d$ 为光照点颜色，$n$ 为面单位法向量，$l$ 为入射光单位方向向量。
 
 ---
 * **Specular Term (Blinn-Phong)**
