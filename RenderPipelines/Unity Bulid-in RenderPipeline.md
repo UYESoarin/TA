@@ -81,9 +81,7 @@
 * Dot product
 
 $$
-\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
-\cdot
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( x_1, y_1, z_1 \right) \cdot \left( x_2 \atop y_2 \atop z_2 \right)
 =
 x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
@@ -92,16 +90,14 @@ $$
 * Cross product
 
 $$
-\begin{pmatrix} x_1 & y_1 & z_1 \end{pmatrix}
-\times
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( x_1, y_1, z_1 \right) \times \left( x_2 \atop y_2 \atop z_2 \right)
 =
 \begin{pmatrix}
 0 & -z_1 & y_1 \\
 z_1 & 0 & -x_1 \\
 -y_1 & x_1 & 0
 \end{pmatrix}
-\begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix}
+\left( x_2 \atop y_2 \atop z_2 \right)
 $$
 
 ---
