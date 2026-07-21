@@ -76,14 +76,19 @@
 ### Computer Graphic Math Principle
 ---
 #### Vector multiplication in Matrix form
+
 * Dot product
+
 $$
 \begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\cdot
 \begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
 =x_1x_2+y_1y_2+z_1z_2
 $$
+
 ---
+
 * Cross product
+
 $$
 \begin{pmatrix} x_1&y_1&z_1\end{pmatrix}\times
 \begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
@@ -95,7 +100,9 @@ z_1&0&-x_1\\
 \end{bmatrix}
 \begin{pmatrix}x_2\\ y_2\\ z_2\end{pmatrix}
 $$
+
 ---
+
 * Rotation around an axis Matrix
 
 $$
@@ -127,8 +134,11 @@ R_z(\alpha)=
 0&0&0&1
 \end{bmatrix}
 $$
+
 ---
+
 * View/Camera Transformation(Position to Zero, up to y, forward to -z)
+
 $$
 ViewMatrix=RT=
 \begin{bmatrix}
@@ -144,59 +154,95 @@ x_{back}&y_{back}&z_{back}&0\\
 0&0&0&1
 \end{bmatrix}
 $$
+
 注意，$R$ 由正交性，逆向转置求解。
+
 ---
+
 * Orthographic/Perspective Projection 略
+
 ---
+
 * **Phong**
+
+
 $$
 I_p=k_aI_a+\sum _{m\in lights}\left(k_dI_{m,d}(n_m\cdot l)+k_sI_{m,s}(r_m\cdot v)\right)
 $$
+
 ---
+
 * **Lambertian(Diffuse)**
+
 $$
 L_d=k_d(I/r^2)\max(n\cdot l,0)
 $$
+
 其中，$k_d$ 为光照点颜色，$n$ 为面单位法向量，$l$ 为入射光单位方向向量。
+
 ---
 * **Specular Term(Blinn-Phong)**
+
 $$
 L_s=k_s(I/r^2)\max(n\cdot h,0)^p
 $$
+
 其中，$k_s$ 为高光反射颜色，$h$ 为入射光方向向量 $l$，与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
+
 ---
+
 * **Ambient Term**
+
 $$
 L_a=k_aI_a
 $$
+
 其中，$k_a$ 为环境光。
+
 ---
+
 * **Blinn-Phong Reflection Model**
+
 $$
 L=L_a+L_d+L_s
 $$
+
 解决 Phong 的高光光照问题。
 
 * Barycentric coordinates`重心坐标`
+
 $$
 (x,y)=\alpha A+\beta B+\gamma C\\
 \alpha+\beta+\gamma=1
 $$
+
 其中，$A$，$B$，$C$ 为三角形的顶点坐标，若系数皆非负，则坐标在三角形内。
 推广：$V=V_A+V_B+V_C$，对内部插值参数颜色、坐标、法线、深度、材质。
 
 ---
+
 * Bilinear interpolation 略
+
 * Mip Map Level Computing
+
 * Displacement mapping
+
 * Constuctive Solid Geometry
+
 * Catmull-Clark Subdivision
+
 * Spatial Patitioning 
+
     * KD-Tree
+
     * Oct-Tree
+
     * BSP-Tree
+
 ---
+
 * The Plenoptic Function
+
 $$
 P(\theta,\phi,\lambda,t,V_x,V_y,V_z)
 $$
