@@ -1,8 +1,10 @@
 # 渲染管线
 
 
-### CPU Application —— 确定渲染对象与顺序
 ---
+
+### CPU Application —— 确定渲染对象与顺序
+
 * **剔除 `Culling`**
 视锥剔除 `Frustum Culiing`：AABB包围盒`Axis-Aligned Bounding Box`判断与视锥碰撞
 遮挡剔除 `Occlusion Culling`
@@ -20,8 +22,10 @@
 * **提交 SetPassCall & DrawCall**
 
 
-### Vertex Shader Processing —— 顶点变换到屏幕空间
 ---
+
+### Vertex Shader Processing —— 顶点变换到屏幕空间
+
 * **MVP变换**
     1. 模型空间`Object Space`
     ↓ **Model** Matrix
@@ -35,8 +39,10 @@
 * **自定义数据**
 
 
-### Triangle Processing & Rasterization —— 点连成图元，图元光栅化得片元
 ---
+
+### Triangle Processing & Rasterization —— 点连成图元，图元光栅化得片元
+
 * 裁剪剔除：剔除裁剪空间外的面
 * 标准化设备坐标 NDC：透视除法，视口归一化便于适配分辨率(视锥体坍缩为立方体)
 * 背面剔除：根据法线方向
@@ -45,8 +51,10 @@
 * 光栅化：分配三角面与内部片元
 
 
-### Fragment Shader Processing —— 上色
 ---
+
+### Fragment Shader Processing —— 上色
+
 * 纹理着色
     * 纹理采样：UV 映射与采样
     * 纹理过滤`Filter Mode`：插值M
@@ -63,19 +71,24 @@
         $$max(n·l,0) + pow(max(r·v,0),smoothness) + ambient$$
 
 
-### Merge & Output image(pixels) —— 颜色遮挡与透明混合
 ---
+
+### Merge & Output image(pixels) —— 颜色遮挡与透明混合
+
 * 帧缓冲区`Frame Buffer Operations`：颜色、深度、模板缓冲
 * Alpha测试
 * 深度测试`Depth Test`：`Early-Z`为顶点着色提前深度测试
 * 深度写入`Depth Write`
 * 颜色混合`Blending`：透明重叠插值 Src * Alpha + Dst * OneMinusAlpha
 
-### 后处理
 ---
-### Computer Graphic Math Principle
+
+### 后处理
 
 ---
+
+### Computer Graphic Math Principle
+
 #### Vector multiplication in Matrix form
 
 * Dot product
@@ -86,7 +99,6 @@ $$
 \begin{pmatrix} x_2 & y_2 & z_2 \end{pmatrix}^T= x_1 x_2 + y_1 y_2 + z_1 z_2
 $$
 
----
 * Cross product
 
 $$
@@ -102,6 +114,7 @@ z_1 & 0 & -x_1 \\
 $$
 
 ---
+
 * Rotation around an axis Matrix
 
 $$
@@ -135,6 +148,7 @@ R_z(\alpha)=
 $$
 
 ---
+
 * View/Camera Transformation (Position to Zero, up to y, forward to -z)
 
 $$
@@ -156,9 +170,11 @@ $$
 注意， $R$ 由正交性，逆向转置求解。
 
 ---
+
 * Orthographic/Perspective Projection 略
 
 ---
+
 * **Phong**
 
 $$
@@ -166,6 +182,7 @@ I_p = k_a I_a + \sum_{m \in lights} \left( k_d I_{m,d} (n_m \cdot l) + k_s I_{m,
 $$
 
 ---
+
 * **Lambertian (Diffuse)**
 
 $$
@@ -175,15 +192,17 @@ $$
 其中， $k_d$ 为光照点颜色， $n$ 为面单位法向量， $l$ 为入射光单位方向向量。
 
 ---
+
 * **Specular Term (Blinn-Phong)**
 
 $$
 L_s = k_s \frac{I}{r^2} \max(n \cdot h, 0)^p
 $$
 
-其中， $k_s$ 为高光反射颜色， $h$ 为入射光方向向量 $l$ ，与视线观察向量 $v$ 的单位半角向量，能一定程度反映观察方向与镜面反射方向夹角。
+其中， $k_s$ 为高光反射颜色， $h$ 为入射光方向向量 $l$ ，与视线观察向量 $v$ 的单位半角向量，一定程度反映观察方向与镜面反射方向夹角。
 
 ---
+
 * **Ambient Term**
 
 $$
@@ -193,13 +212,13 @@ $$
 其中， $k_a$ 为环境光。
 
 ---
+
 * **Blinn-Phong Reflection Model**
 
 $$
 L = L_a + L_d + L_s
 $$
 
-解决 Phong 的高光光照问题。
 
 * Barycentric coordinates（重心坐标）
 
@@ -216,6 +235,7 @@ $$
 推广： $V = V_A + V_B + V_C$ ，对内部插值参数颜色、坐标、法线、深度、材质。
 
 ---
+
 * Bilinear interpolation 略
 * Mip Map Level Computing
 * Displacement mapping
@@ -227,6 +247,7 @@ $$
     * BSP-Tree
 
 ---
+
 * The Plenoptic Function
 
 $$
