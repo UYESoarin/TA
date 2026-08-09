@@ -63,7 +63,9 @@
 ### 四、总结
 
 * $C_{final}=C_{dirLighting}+C_{envLighting}$
+
 <br>
+
 * $C_{lighting}=(C_{diffuse}+C_{specular}) \times C_{shadow}$
 
 ---
