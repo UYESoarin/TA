@@ -9,8 +9,9 @@
 |Func|CG|HLSL|Note|
 |:-:|:-:|:-:|:-:|
 |O2C|`UnityObjectClipPos(posOS)`|`TransformObjectHClip(posOS.xyz)`|MVP|
-|O2W|`mul(unity_ObjectToWorld, posOS)`|`TransformObjectToWorld(posOS.xyz)`|Interact in World(Light)|
-|W2C|`mul(UNITY_MATRIX_VP, posWS)`|`TransformWorldToHClip(posWS.xyz)`||
+|O2W|`mul(unity_ObjectToWorld, posOS)`|`TransformObjectToWorld(posOS.xyz)`|float3 in World(Light)|
+|W2V|`mul(UNITY_MATRIX__V, posWS)`|`TransformWorldToViewPos(posWS)`|`TransformWorldToViewDir(nDirWS)` for matcap|
+|W2C|`mul(UNITY_MATRIX_VP, posWS)`|`TransformWorldToHClip(posWS)`||
 |nDirWS|`UnityObjectToworldNormal(nDirOS)`|`TransformObjectToWorldNormal(nDirOS)`|Non-uniform Scaling (auto Inverse Transpose Matrix)|
 |vDirWS|`_WorldSpaceCameraPos - posWS`|`GetWorldSpaceViewDir(posWS)`|ToNormalized<br>`GetWorldSpaceNormalizedViewDir(posWS)`|
 |cameraPosWS|`_WorldSpaceCameraPos`|`GetCameraPositionWS()`||
@@ -22,12 +23,13 @@
 |Func|CG|HLSL|Note|
 |:-:|:-:|:-:|:-:|
 |**Data**|
-|lDir/Col|`_WoldSpaceLightPos0.xyz`/`_LightColor0.rgb`|`GetMainLight()`|HLSL: `struct Light{half3 direction, color, distanceAttenuation, shadowAttenuation};`|
-|extraLights|`#pragma multi_compile_fwdadd`|`GetAdditionalLight(uint idx, float3 posWS)`|HLSL: Return `Light`<br> Cycle with `GetAdditionalLightsCount()`|
+|shadowCoord|`SHADOW_COORDS(idx)` (v2f i.texcoord[idx], i.pos)<br>`TRANSFER_SHADOW(v2f o)`(vert)|`TransfromWorldToShadowCoord(posWS)`|`float4` W2Shadow|
+|lDir/Col/shadow|`_WoldSpaceLightPos0.xyz`/`_LightColor0.rgb`/`SHADOW_ATTENUATION(v2f i)`(frag)|`GetMainLight()`|HLSL: `struct Light{half3 direction, color, distanceAttenuation, shadowAttenuation};`|
+|extraLights|`#pragma multi_compile_fwdadd`|`GetAdditionalLight(shadowCoord)`|HLSL: Return `Light`<br> Cycle with `GetAdditionalLightsCount()`|
 |**Model**|
 |Lambert|`max(0.0, dot(n, l)) * lCol`|`LightingLambert(lCol, lDir, nDir)`||
 |Blinn-Phong|`pos(max(0.0, dot(n, h)), gloss)`|`LightingSpecular(lCol, lDir, nDir, vDir, specular, smoothness)`||
-|Ambient|`UNITY_LIGHTMODEL_AMBIENT`|`SampleSH(nDir)`||
+|Ambient|`UNITY_LIGHTMODEL_AMBIENT`|`SampleSH(nDir)`|float3|
 
 #### 1.3 AO
 
@@ -54,8 +56,9 @@
 |CUBE|`samplerCUBE _MainTex`|`TEXTURECUBE(_Env);`<br>`SAMPLER(sampler_Env);`||
 |**Sample**|
 |2D|`tex2D(_MainTex, uv)`|`SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv)`||
+|2DLOD|`tex2Dlod(_MainTex, float4(uv, 0, lod))`|`SAMPLE_TEXTURE2D_LOD(_Tex, sampler_Tex, uv, lod)`||
 |CUBE|`texCUBE(_Env, dir)`|`SAMPLE_TEXTURECUBE(_Env, sampler_Env, dir)`||
-|LOD|`tex2Dlod(_MainTex, float4(uv, 0, lod))`|`SAMPLE_TEXTURE2D_LOD(_Tex, sampler_Tex, uv, lod)`||
+|CUBELOD|`texCUBElod(_Cubemap, dir, lod)`|`SAMPLE_TEXTURECUBE_LOD(TEXTURECUBE(cubemapName), SAMPLER(samplerName), float3 direction, float lod)`|LOD = 0: smoothest; blur when higher|
 |Tilling&offset|`TRANSFORM_TEX(uv, _MainTex)`|`TRANSFORM_TEX(uv, _MainTex)`|`float4 _MainTex_ST;`<br>`o.uv = i.uv * _MainTex.xy + _MainTex.zw`|
 
 #### 1.6 Global Variables
@@ -72,18 +75,18 @@
 
 ---
 
-### 2. Math Function
+### 2. 数学函数
 
-|Type|Func|Note|
+|类型|函数|提示|
 |:-:|:-:|:-:|
-|三角|`sin`, `cos`, `tan`, `atan2`||
-|指数/幂|`pow`, `exp`, `sqrt`, `rsqrt`||
-|取整/小数|`floor`, `ceil`, `round`, `frac`||
-|边界限制|`clamp`, `satuate`, `max`, `min`||
-|插值/阶跃|`lerp`, `step`, `smoothstep`||
-|向量|`dot`, `cross`, `normalize`, `length`, `distance`||
-|导数|`ddx`, `ddy`, `fwidth`||
-|丢弃|`clip`, `discard`||
+|三角|`sin`, `cos`, `tan`, `atan2`|
+|指数/幂|`pow`, `exp`, `sqrt`, `rsqrt`|指数强度|
+|取整/小数|`floor`, `ceil`, `round`, `frac`|`round`对 0.5 `step`|
+|边界限制|`clamp`, `saturate`, `max`, `min`, `abs`|风格化、离散选区|
+|插值/阶跃|`lerp`, `step`, `smoothstep`|遮罩与条件二值，对目标区间变量插值实现动态变化|
+|线代|`dot`, `cross`, `normalize`, `length`, `distance`,`mul`|`mul`兼容矩阵左/右乘列/行向量|
+|导数|`ddx`, `ddy`, `fwidth`|
+|丢弃|`clip`, `discard`|
 
 ---
 
@@ -91,18 +94,20 @@
 
 #### 3.1 Semantics `语义`
 
+* **Semantic Binding Register** `[Type] Name [: Semantic]`
+
 |Semantic|Var|Note|
 |:-:|:-:|:-:|
 |**VertIn (appdata from CPU)**|
 |`: POSITION`|`float4 posOS`||
-|`: NORMAL`|`float3 nDirOS`|Lighting|
+|`: NORMAL`|`float3 nDirOS`|normalizeAfterInterpolation|
 |`: TANGENT`|`float4 tDirOS`|normalTexture|
 |**FragOut (VertIn)**|
 |`: SV_POSITION`|`float4 posCS`||
 |**FragOut**|
 |`: SV_Target`|`float4 finalCol`||
 |**VertIn/VertOut**||for Data Interpolation|
-|`TEXCOORD0~7`|`float~float4`|`float2 uv[0~3] : TEXCOORD[0~3]` 4 for uv<br>`TEXCOORD0~TEXCOORD15` 16 for interpolation|
+|`TEXCOORDn`|`float~float4`|`floats2 uv[0~3] : TEXCOORD[0~3]` 4 for uv<br>`TEXCOORD[0~15]` 16 for interpolation|
 |`COLOR`|`float4 vertexCol`||
 
 #### 3.2 Interpolation Modifiers `插值修饰符`
@@ -117,7 +122,7 @@
 
 |Directive|Note|
 |:-:|:-:|
-|**# pragma [shader] [shaderFuncName]**|
+|**# pragma [shader] [AssignshaderFunc]**|
 |`#pragma vertex vert`|vertexShaderFuncMain|
 |`#pragma fragment frag`|fragmentShaderFuncMain|
 |`#pragma target 3.0/4.0/5.0`|shaderVersion|
@@ -130,8 +135,8 @@
 c/c++
 #include "MyFunc.hlsl" 
 #define myGray(x) float4(x,x,x,1);
-#ifdef #endif
-#if #elif #else
+#ifdef X/#if define(X) #ifndef X/#if !define(X)
+#if [cond] #elif #else #endif
 #pragma
 ```
 
@@ -148,8 +153,9 @@ CBUFFER_END
 
 #### 3.5 Data Type
 
-* `float 32bit, half 16bit, fixed 8bit (onlyCG)` 
-* `float3x3 matrix = float3x3(1,0,0, 0,1,0, 0,0,1);`
+* `float 32bit, half 16bit, fixed 11bit (onlyCG)` 
+* `float3x3 matrix = float3x3()` **constructed by elements/rowVector**
+* `sampler2D, sampler3D, samplerCUBE, int, bool`
 * `float4[.xyzw/.rgba/.xxx/.rg]`
 
 ---
@@ -174,4 +180,3 @@ CBUFFER_END
 >`DeclareDepthTexture.hlsl`
 >`SurfaceInput.hlsl` **(PBR)**
 >`Particles.hlsl`
-> 

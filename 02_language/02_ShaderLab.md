@@ -30,9 +30,9 @@ Shader "[Path/Name]"{
 
 |Type|Example|Note|
 |:-:|:-:|:-:|
-||**`[Attribute] Name("InspectText", Type) = Default`**|
+||**`[Attribute] propertyName("InspectText", Type) = Default`**|`uniform`|
 |**valueType**|
-|Float|`_Name("Text", Float) = 0.0`|32bit float|
+|Float|`_Name("Text", Float) = 0.0`|32bit float/16bit half/8bit fixed (CG)|
 |Range|`_Name("Text", Range(0, 1)) = 0.0`|float slider|
 |Int|`_Name("Text", Int) = 1`|float|
 |Integer|`_Name("Text", Integer) = 1`|int|
@@ -42,8 +42,9 @@ Shader "[Path/Name]"{
 |**ReferrenceType**|
 |2D|`_Name("Text", 2D) = "white"{}`|sampler2D (SAMPLER + TEXTRUE2D)<br>`"color"{texture}` color: white/black/bump/red|
 |Cube|`_Name("Text", Cube) = ""{}`|samplerCUBE|
-|3D|`_Name("Text", 3D) = ""{}`||
-|2DArray|`_Name("Text", 2DArray) = ""{}`||
+|3D|`_Name("Text", 3D) = ""{}`|sampler3D|
+|2DArray|`_Name("Text", 2DArray) = ""{}`|UNITY_DECLARE_TEX2DARRAY(_MyArr)|
+|CubeArray|`_Name("Text", CubeArray)` = ""{}|UNITY_DECLARE_TEXCUBEARRAY(_MyArr)|
 
 >* Serialization 
 >* RenderSetup:
@@ -55,22 +56,29 @@ Shader "[Path/Name]"{
 |:-:|:-:|
 |**`[Attribute]`**|
 |`[Space()]`|Spacing|
-|`[Header()]`|Title|
+|`[Header(lable)]`|Title|
+|`[HideInInspector]`||
+|`[NoScaleOffset]`|fixed RT|
+|`[Normal]`|check NormalMap|
+|`[HDR]`|Emiss/Effect|
+|`[Gamma]`|ColorSpace|
+|`[PowerSlider(value)]`|Range drag adjust|
 |`[Toggle]`|Float|
 |`[Toggle(ENABLE)]`|`#ifdef ENABLE #else #endif`|
-|`[PowerSlider(3.0)]`|Range|
 |`[IntRange]`|Range|
-|`[KeyWordEnum(StateOff, State0, etc)]`|`#ifd _Name_State0 #elif _Name_State1`|
-|`[Enum(UnityEngine.Rendering.CullMode)]`||
+|`[KeyWordEnum(StateOff, State0, etc)]`|`#if _Name_State0 #elif _Name_State1 #else #endif`|
+|`[Enum(UnityEngine.Rendering)]`|`CullMode`, `BlendMode`, `BlendOp`|
 |`[Enum(Off, 0, Front, 1, Back, 2)]`|`Cull [_Name]`|
-|`[HideInInspector]`||
 |`[PerRendererData]`||
 
 ### 2.3. Variant
-|Pragma|Variant|Note|
+
+|Pragma|Variant|Compile|
 |:-:|:-:|:-:|
-|`#pragma shader_feature`|||
-|`#pragma multi_compile`|`__ Var1 Var2 ...`|`_local`|
+|`#pragma shader_feature`|`Var`|UsingVariant|
+|`#pragma multi_compile`|`__ Var1 Var2 ...`|AllVariant & DynamicShift|
+
+* `_local` control single material
 
 ---
 
@@ -105,6 +113,7 @@ Shader "[Path/Name]"{
 |`RenderPipeline`|`UniversalPipeline`/`HDRenderPipeline`||
 |`DisableBatching`|`True`||
 |`ForceNoShadowCasting`|`True`||
+|`IgnoreProjector`|`True`|
 |`CanUseSpriteAtlas`|`True`||
 |`PreivewType`|`Shpere`/`Plane`/`Skybox`||
 
@@ -124,7 +133,18 @@ Shader "[Path/Name]"{
 |`ZTest`|`Less`/`Greater`/`LEqual`/`GEqual`/`Equal`/`NotEqual`/`Always`||
 |`ZWrite`|`On`/`Off`|Off when Alpha|
 |`Offset`|offsetFactor, offsetUnits|Z-Fighting|
-|`Blend`|`SrcAlpha OneMinusSrcAlpha`/`One One`||
-|`BlendOp`|`Add`/`Sub`/`RevSub`/`Min`/`Max`||
+|`BlendOp`|`Add`/`Sub`/`RevSub`/`Min`(`Darken`)/`Max`(`Lighten`)/...|`op SrcS, DstD`|
 |`ColorMask`|R G B A 0||
 |`AlphaToMask`|`On`/`Off`|MSAA Alpha Test|
+
+|`Blend`|Note|
+|`[SrcFactor] [DstFactor]`|`[One, Zero, OneMinus, Src, Dst, Color(RGB), Alpha]`<br>`SrcCol * SrcFactor [BlendOp] DstCol * DstFactor`|
+|`SrcAlpha OneMinusSrcAlpha`|Normal transparent when SrcAlpha = 0|
+|`One OneMinusSrcAlpha`|`One` Transparent when SrcCol = 0 (with SrcAlpha)|
+|`DstColor  Zero`|`Multiply`: shadeMultiply|
+|`OneMinusDstColor One`|`Soft Additive`: lightMultiply|
+|`DstColor SrcColor`|`2x Multiply`|
+|`One One`|`Min`to`Darken`, `Max`to`Lighten`|
+|`One OneMinusSrcColor`||
+|`SrcAlpha One`|particleEffect|
+|`One Zero`|Cover|
