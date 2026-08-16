@@ -10,12 +10,12 @@
 |:-:|:-:|:-:|:-:|
 |O2C|`UnityObjectClipPos(posOS)`|`TransformObjectHClip(posOS.xyz)`|MVP|
 |O2W|`mul(unity_ObjectToWorld, posOS)`|`TransformObjectToWorld(posOS.xyz)`|float3 in World(Light)|
-|W2V|`mul(UNITY_MATRIX__V, posWS)`|`TransformWorldToViewPos(posWS)`|`TransformWorldToViewDir(nDirWS)` for matcap|
+|W2V|`mul(UNITY_MATRIX__V, posWS)`|`TransformWorldToView(posWS)`|`TransformWorldToViewDir(nDirWS)` for matcap|
 |W2C|`mul(UNITY_MATRIX_VP, posWS)`|`TransformWorldToHClip(posWS)`||
 |nDirWS|`UnityObjectToworldNormal(nDirOS)`|`TransformObjectToWorldNormal(nDirOS)`|Non-uniform Scaling (auto Inverse Transpose Matrix)|
 |vDirWS|`_WorldSpaceCameraPos - posWS`|`GetWorldSpaceViewDir(posWS)`|ToNormalized<br>`GetWorldSpaceNormalizedViewDir(posWS)`|
 |cameraPosWS|`_WorldSpaceCameraPos`|`GetCameraPositionWS()`||
-|C2S(NDC)|`posCS.xy/posCS.w * 0.5 + 0.5`|`GetNormalizedScreenSpace(posCS)`||
+|C2S(NDC)|`posCS.xy/posCS.w * 0.5 + 0.5`|`GetNormalizedScreenSpace(posCS)`|platform YFlip|
 |ScreenResolution|`_ScreenParams.xy`|`GetScaledScreenParams().xy`||
 
 #### 1.2 Light
@@ -59,7 +59,7 @@
 |2DLOD|`tex2Dlod(_MainTex, float4(uv, 0, lod))`|`SAMPLE_TEXTURE2D_LOD(_Tex, sampler_Tex, uv, lod)`||
 |CUBE|`texCUBE(_Env, dir)`|`SAMPLE_TEXTURECUBE(_Env, sampler_Env, dir)`||
 |CUBELOD|`texCUBElod(_Cubemap, dir, lod)`|`SAMPLE_TEXTURECUBE_LOD(TEXTURECUBE(cubemapName), SAMPLER(samplerName), float3 direction, float lod)`|LOD = 0: smoothest; blur when higher|
-|Tilling&offset|`TRANSFORM_TEX(uv, _MainTex)`|`TRANSFORM_TEX(uv, _MainTex)`|`float4 _MainTex_ST;`<br>`o.uv = i.uv * _MainTex.xy + _MainTex.zw`|
+|Tilling&offset|`TRANSFORM_TEX(uv, _MainTex)`|`TRANSFORM_TEX(uv, _MainTex)`|`float4 _MainTex_ST;`<br>`o.uv = i.uv * _MainTex_ST.xy + _MainTex_ST.zw`|
 
 #### 1.6 Global Variables
 
@@ -79,7 +79,7 @@
 
 |类型|函数|提示|
 |:-:|:-:|:-:|
-|三角|`sin`, `cos`, `tan`, `atan2`|
+|三角|`sin`, `cos`, `tan`, `atan2`, `atan`|`atan` 单参返回 [-pi/2, pi/2]，`atan2` 双惨返回 [-pi, pi]|
 |指数/幂|`pow`, `exp`, `sqrt`, `rsqrt`|指数强度|
 |取整/小数|`floor`, `ceil`, `round`, `frac`|`round`对 0.5 `step`|
 |边界限制|`clamp`, `saturate`, `max`, `min`, `abs`|风格化、离散选区|
@@ -87,7 +87,7 @@
 |线代|`dot`, `cross`, `normalize`, `length`, `distance`,`mul`|`mul`兼容矩阵左/右乘列/行向量|
 |导数|`ddx`, `ddy`, `fwidth`|
 |丢弃|`clip`, `discard`|
-
+|取余|`fmod` 用于浮点数|`%` 用于 `int/uint`| 
 ---
 
 ### 3. Shader Language Features

@@ -94,12 +94,12 @@ Shader "[Path/Name]"{
 |`Queue`|Index (RenderSequence)|Note|
 |:-:|:-:|:-:|
 |`Background`|1000|Skybox|
-|`Geometry`|2000|Opaque(<=2500) near2far|
+|`Geometry`|2000|Opaque(<=2500) near2far `ZWrite On`!!!|
 |`AlphaTest`|2450|Alpha|
-|`Transparent`|3000|far2near|
+|`Transparent`|3000|far2near `ZWrite Off`!!!|
 |`Overlay`|4000|UI|
 
-|`RenderType`|Note|
+|`RenderType` (for CPU)|Note|
 |:-:|:-:|
 |`Background`||
 |`Opaque`||
@@ -123,9 +123,10 @@ Shader "[Path/Name]"{
 
 #### 4.1 Pass Tags
 
-`"LightMode" = "ForwardBase"/"ForwardAdd"/"UniversalForward"/"ShadowCaster"`
+`"LightMode" = "ForwardBase"/"ForwardAdd"/"UniversalForward"/"ShadowCaster"/SRPDefaultUnlit`
+* ###### Note: Unlike SubShader-level "Queue", which controls draw order for the material (only ONE queue), Pass-level "LightMode" govern whether this pass is used by the render pipeline
 
-#### 4.2 RenderSetup
+#### 4.2 RenderState
 
 |Command|Type|Note|
 |:-:|:-:|:-:|
@@ -138,6 +139,7 @@ Shader "[Path/Name]"{
 |`AlphaToMask`|`On`/`Off`|MSAA Alpha Test|
 
 |`Blend`|Note|
+|:-:|:-:|
 |`[SrcFactor] [DstFactor]`|`[One, Zero, OneMinus, Src, Dst, Color(RGB), Alpha]`<br>`SrcCol * SrcFactor [BlendOp] DstCol * DstFactor`|
 |`SrcAlpha OneMinusSrcAlpha`|Normal transparent when SrcAlpha = 0|
 |`One OneMinusSrcAlpha`|`One` Transparent when SrcCol = 0 (with SrcAlpha)|
@@ -147,4 +149,41 @@ Shader "[Path/Name]"{
 |`One One`|`Min`to`Darken`, `Max`to`Lighten`|
 |`One OneMinusSrcColor`||
 |`SrcAlpha One`|particleEffect|
-|`One Zero`|Cover|
+|`One Zero`|Default|
+
+#### 4.3 multiPass Problem
+
+* ##### basic structure
+
+```shaderlab
+Shader
+ └── SubShader
+      ├── SubShader Tags
+      │    ├── Queue
+      │    └── RenderType
+      │
+      ├── Pass A
+      │    ├── Pass Tags
+      │    │    └── LightMode
+      │    └── Render State
+      │         ├── ZWrite
+      │         ├── ZTest
+      │         ├── Blend
+      │         └── Cull
+      │
+      └── Pass B
+           ├── Pass Tags
+           │    └── LightMode
+           └── Render State
+                ├── ZWrite
+                ├── ZTest
+                ├── Blend
+                └── Cull
+```
+
+* ##### usual match
+
+|Queue|RenderType|ZWrite|Blend|
+|:-:|:-:|:-:|:-:|
+|Geometry|Opaque|On|Off|
+|Transparent|Transparent|Off|On|
