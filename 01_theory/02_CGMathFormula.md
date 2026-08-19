@@ -60,6 +60,12 @@ R_z(\alpha)=
 \end{bmatrix}
 $$
 
+* Sequence of Vertex Transformation (S - R(Y - X - Z) - T)
+
+$$
+P_t=T \cdot R \cdot S \cdot P_0
+$$
+
 ---
 
 * View/Camera Transformation (Position to Zero, up to y, forward to -z)

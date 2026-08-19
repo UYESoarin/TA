@@ -72,6 +72,7 @@
 |`_ProjectionParams`|`float4([FlipOrNot], [NearPlane], [FarPlane], 1/[FarPlane])`|
 |`_ZBufferParams`|`float4`|
 |`_ScreenParams`|`float4(width, height, 1/width, 1/height)`|
+|`PI`|`3.1415926535897932384243...`|
 
 ---
 
@@ -79,15 +80,15 @@
 
 |类型|函数|提示|
 |:-:|:-:|:-:|
-|三角|`sin`, `cos`, `tan`, `atan2`, `atan`|`atan` 单参返回 [-pi/2, pi/2]，`atan2` 双惨返回 [-pi, pi]|
-|指数/幂|`pow`, `exp`, `sqrt`, `rsqrt`|指数强度|
-|取整/小数|`floor`, `ceil`, `round`, `frac`|`round`对 0.5 `step`|
+|三角|`sin`, `cos`, `tan`, `atan2`, `atan`, `radians`, `degrees`, `sincos`, `sincos_half`|`atan` 单参返回 `[-PI/2, PI/2]` ， `atan2` 双惨返回 `[-PI, PI]` ， `sincos(float rad, inout sin, inout cos)` 性能较优|
+|指数/幂|`pow`, `exp`, `sqrt`, `rsqrt`|非线性调制|
+|取整|`floor`, `ceil`, `round`|`round(x)` 即 `step(x, 0.5)`|
+|取余|`frac`, `fmod` 用于浮点数|`%` 用于 `int/uint`；`frac(x)` 即 `fmod(x, 1)`；对 n 取模返回 `[0, n)`|
 |边界限制|`clamp`, `saturate`, `max`, `min`, `abs`|风格化、离散选区|
 |插值/阶跃|`lerp`, `step`, `smoothstep`|遮罩与条件二值，对目标区间变量插值实现动态变化|
 |线代|`dot`, `cross`, `normalize`, `length`, `distance`,`mul`|`mul`兼容矩阵左/右乘列/行向量|
 |导数|`ddx`, `ddy`, `fwidth`|
 |丢弃|`clip`, `discard`|
-|取余|`fmod` 用于浮点数|`%` 用于 `int/uint`| 
 ---
 
 ### 3. Shader Language Features
@@ -151,12 +152,13 @@ CBUFFER_START(UnityPerMaterial)
 CBUFFER_END
 ```
 
-#### 3.5 Data Type
+#### 3.5 Data Type & Modifier
 
 * `float 32bit, half 16bit, fixed 11bit (onlyCG)` 
 * `float3x3 matrix = float3x3()` **constructed by elements/rowVector**
 * `sampler2D, sampler3D, samplerCUBE, int, bool`
 * `float4[.xyzw/.rgba/.xxx/.rg]`
+* `in (default) out inout` **valueType**
 
 ---
 
